@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFinder — Experience Careers Before You Choose Them</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0d0f12',
+                        darkcard: 'rgba(22, 25, 32, 0.75)',
+                        darkborder: 'rgba(255, 255, 255, 0.08)',
+                        pastel: {
+                            lavender: '#d8b4fe',
+                            mint: '#a8f0e0',
+                            rose: '#fecdd3',
+                            peach: '#fef08a',
+                            cyan: '#bae6fd',
+                            purple: '#c084fc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 4s infinite ease-in-out',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                            '50%': { opacity: '0.6', transform: 'scale(1.05)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0d0f12;
+            color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(22, 25, 32, 0.85);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(26, 30, 42, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(216, 180, 254, 0.35);
+            box-shadow: 0 0 30px -5px rgba(216, 180, 254, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .gradient-pastel-text {
+            background: linear-gradient(135deg, #d8b4fe 0%, #a8f0e0 50%, #bae6fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-warning-text {
+            background: linear-gradient(135deg, #fef08a 0%, #fecdd3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0f12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2238;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a304e;
+        }
+
+        /* Subtle Background Ambient Spheres */
+        .bg-glow-1 {
+            position: absolute;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, rgba(216, 180, 254, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(168, 240, 224, 0.07) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 700px;
+            right: -100px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-3 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(254, 205, 211, 0.06) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 1800px;
+            left: -100px;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-pastel-lavender selection:text-slate-900">
+
+    <!-- Ambient Glowing Spheres -->
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+    <div class="bg-glow-3"></div>
+
+    <nav class="sticky top-0 z-40 glass-panel border-b border-darkborder transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pastel-purple via-pastel-lavender to-pastel-mint p-0.5 shadow-lg shadow-pastel-lavender/20 group-hover:shadow-pastel-lavender/40 transition-all">
+                        <div class="w-full h-full bg-darkbg rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-compass text-pastel-lavender group-hover:rotate-45 transition-transform duration-500"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-extrabold tracking-tight gradient-pastel-text">PathFinder</span>
+                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-widest -mt-1">Career Discovery Platform</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden lg:flex items-center space-x-7 text-xs font-semibold text-slate-300">
+                    <a href="#problem-solution" class="hover:text-pastel-lavender transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-scale-balanced text-pastel-peach"></i> Problems & Solution :D
+                    </a>
+                    <a href="#quiz-section" class="hover:text-pastel-lavender transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pastel-rose"></i> Career Quiz
+                    </a>
+                    <a href="#career-explorer" class="hover:text-pastel-lavender transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass text-pastel-mint"></i> Career Catalog
+                    </a>
+                    <a href="#counselling-section" class="hover:text-pastel-lavender transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-heart-pulse text-pastel-rose"></i> Mental Health & Advice
+                    </a>
+                    <a href="#community-hub" class="hover:text-pastel-lavender transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-pastel-cyan"></i> Peer Network
+                    </a>
+                </div>
+
+                <!-- CTA Actions & Gmail Sync Status -->
+                <div class="flex items-center gap-3">
+                    <button id="gmail-sync-btn" onclick="openGmailSyncModal()" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-pastel-mint text-xs font-semibold text-slate-200 transition-all flex items-center gap-2">
+                        <i class="fa-brands fa-google text-pastel-rose"></i>
+                        <span id="gmail-btn-text" class="hidden sm:inline">Connect Gmail</span>
+                        <span id="gmail-status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    </button>
+
+                    <button onclick="scrollToQuiz()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-pastel-lavender/20 to-pastel-mint/20 border border-pastel-lavender/30 text-pastel-lavender hover:bg-pastel-lavender hover:text-slate-950 text-xs font-bold transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-sparkles text-xs"></i>
+                        <span>Take Career Quiz</span>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden text-slate-400 hover:text-white p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-darkborder bg-darkbg/95 p-4 space-y-3 text-sm font-medium">
+            <a href="#problem-solution" class="block text-slate-300 hover:text-pastel-lavender py-2">Problems & Solution :D</a>
+            <a href="#quiz-section" class="block text-slate-300 hover:text-pastel-rose py-2">Interactive Quiz</a>
+            <a href="#career-explorer" class="block text-slate-300 hover:text-pastel-mint py-2">Career Catalog</a>
+            <a href="#counselling-section" class="block text-slate-300 hover:text-pastel-rose py-2">Mental Health & Counseling</a>
+            <a href="#community-hub" class="block text-slate-300 hover:text-pastel-cyan py-2">Peer Network</a>
+            <button onclick="openGmailSyncModal()" class="w-full text-left py-2 text-pastel-mint flex items-center gap-2 text-xs font-semibold">
+                <i class="fa-brands fa-google"></i> Connect / Manage Gmail Inbox
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative pt-16 pb-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            
+            <!-- Category Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-pastel-lavender/30 text-xs font-semibold text-pastel-lavender mb-8 shadow-lg shadow-pastel-lavender/5">
+                <span class="flex h-2 w-2 rounded-full bg-pastel-mint animate-ping"></span>
+                <span>✨ Experience Careers Before Choosing Them</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-slate-300">No Job Quitting Required</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 max-w-5xl mx-auto leading-tight">
+                Try Careers Before You Commit To Them
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+                PathFinder helps university students explore careers through simulations, mentorship, AI-powered matching, and micro-internships before choosing a major or career path.
+            </p>
+
+            <!-- Hero Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="#career-explorer" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-pastel-purple via-pastel-lavender to-pastel-mint text-slate-950 font-extrabold text-sm shadow-xl shadow-pastel-lavender/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2.5">
+                    <i class="fa-solid fa-compass text-sm"></i>
+                    <span>Explore Career Paths</span>
+                </a>
+                <a href="#quiz-section" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-slate-200 font-semibold text-sm hover:bg-slate-800/80 hover:text-white border border-slate-700/60 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-pastel-rose"></i>
+                    <span>Start Career Discovery</span>
+                </a>
+            </div>
+
+            <!-- Interactive Journey Visualization SVG -->
+            <div class="my-12 p-6 glass-panel rounded-3xl border border-darkborder max-w-5xl mx-auto">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-pastel-lavender mb-4 text-center">Your Journey: From Doubt to Career Confidence</h3>
+                <div class="w-full overflow-x-auto">
+                    <svg viewBox="0 0 1000 120" class="w-full min-w-[700px]">
+                        <!-- Connecting Line -->
+                        <path d="M 80 60 L 920 60" stroke="url(#lineGradient)" stroke-width="4" stroke-dasharray="6 6" />
+                        
+                        <defs>
+                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#fecdd3" />
+                                <stop offset="20%" stop-color="#d8b4fe" />
+                                <stop offset="40%" stop-color="#bae6fd" />
+                                <stop offset="60%" stop-color="#c084fc" />
+                                <stop offset="80%" stop-color="#fef08a" />
+                                <stop offset="100%" stop-color="#a8f0e0" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Step 1: Student -->
+                        <g transform="translate(80, 60)">
+                            <circle r="28" fill="#161920" stroke="#fecdd3" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#fecdd3">🎓</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">Student</text>
+                        </g>
+
+                        <!-- Step 2: AI Match -->
+                        <g transform="translate(248, 60)">
+                            <circle r="28" fill="#161920" stroke="#d8b4fe" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#d8b4fe">✨</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">AI Match</text>
+                        </g>
+
+                        <!-- Step 3: Simulation -->
+                        <g transform="translate(416, 60)">
+                            <circle r="28" fill="#161920" stroke="#bae6fd" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#bae6fd">🎮</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">Simulation</text>
+                        </g>
+
+                        <!-- Step 4: Mentor -->
+                        <g transform="translate(584, 60)">
+                            <circle r="28" fill="#161920" stroke="#c084fc" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#c084fc">🤝</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">Mentor</text>
+                        </g>
+
+                        <!-- Step 5: Internship -->
+                        <g transform="translate(752, 60)">
+                            <circle r="28" fill="#161920" stroke="#fef08a" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#fef08a">💼</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">Internship</text>
+                        </g>
+
+                        <!-- Step 6: Confidence -->
+                        <g transform="translate(920, 60)">
+                            <circle r="28" fill="#161920" stroke="#a8f0e0" stroke-width="3" />
+                            <text text-anchor="middle" dy="5" font-family="sans-serif" font-size="14" fill="#a8f0e0">🚀</text>
+                            <text y="48" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff">Confidence</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+                <div class="glass-card p-5 rounded-2xl border border-darkborder">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-pastel-rose gradient-warning-text">82%</div>
+                    <div class="text-xs text-slate-400 mt-1 font-medium">Report Settling for the "Safe" Path</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-darkborder">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-pastel-mint">50+</div>
+                    <div class="text-xs text-slate-400 mt-1 font-medium">Niche & Core Field Guides</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-darkborder">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-pastel-cyan">1,400+</div>
+                    <div class="text-xs text-slate-400 mt-1 font-medium">Verified Industry Mentors</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-darkborder">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-pastel-lavender">100%</div>
+                    <div class="text-xs text-slate-400 mt-1 font-medium">At-Home Virtual Workshops</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: PROBLEMS & SOLUTIONS :D -->
+    <section id="problem-solution" class="py-20 relative bg-slate-950/60 border-y border-darkborder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-pastel-lavender mb-3">Problems & Solution :D</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-white">Experience Careers Before Choosing Them</p>
+                <p class="text-slate-400 max-w-2xl mx-auto mt-3 text-sm sm:text-base">
+                    Traditional career switches require massive tuition fees, quitting your income, or jumping in blind. PathFinder removes all risk.
+                </p>
+            </div>
+
+            <!-- Problem vs Solution Side-by-Side Comparison Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- THE PROBLEM COLUMN -->
+                <div class="glass-panel p-8 rounded-3xl border border-red-500/20 relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-bold border border-red-500/20 mb-6">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Column 1: The Problem
+                        </div>
+
+                        <h3 class="text-2xl font-bold text-white mb-4">The "Safe Route" Trap & Permanent Regret</h3>
+                        
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Early in life, most individuals choose traditional or "safe" majors due to financial fear or parental pressure. Decades later, they are locked into golden handcuffs—wondering what life as an investigative journalist, bio-architect, drone wildlife pilot, or surgeon would have felt like.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-lock text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">High Barrier to Exploration</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">Traditional paths force you to quit your job or spend 2–4 years in university just to discover if you actually enjoy the daily reality.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-eye-slash text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">Glamorized vs. True Work Reality</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">Media highlights outcomes, not the grueling day-to-day work environment, leaving switchers vulnerable to shock.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-user-slash text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">Gatekeeping & Niche Isolation</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">Niche, high-fulfillment fields (like motorsport telemetry or bio-design) lack clear entry points for mid-career adults.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-slate-800 text-xs text-red-400 flex items-center justify-between">
+                        <span class="font-bold">Outcome: Unfulfilled Potential & Unanswered "What-Ifs"</span>
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                </div>
+
+                <!-- THE SOLUTION COLUMN -->
+                <div class="glass-panel p-8 rounded-3xl border border-pastel-mint/30 relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-pastel-mint/10 text-pastel-mint text-xs font-bold border border-pastel-mint/20 mb-6">
+                            <i class="fa-solid fa-circle-check"></i> Column 2: The PathFinder Solution
+                        </div>
+
+                        <h3 class="text-2xl font-bold text-white mb-4">Experiential Test-Drives & Guided Transitions</h3>
+                        
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            PathFinder empowers you to test-drive any career field on evenings and weekends from home. Learn the unvarnished reality, complete a bite-sized micro-course, and immediately connect with an industry mentor for a remote workshop or internship.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-pastel-mint/20 text-pastel-mint flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-magnifying-glass-chart text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">In-Depth Field Transparency & Salary Data</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">Detailed global salary metrics (USA, UAE, UK, Germany, Singapore), demand trends, and true daily task breakdowns.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-pastel-mint/20 text-pastel-mint flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-graduation-cap text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">Required Practical Micro-Courses</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">15-minute interactive simulations testing true skill aptitude before committing time or money.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="w-8 h-8 rounded-lg bg-pastel-mint/20 text-pastel-mint flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-handshake-angle text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-white">Direct Verified Internships & Workshops</div>
+                                    <p class="text-xs text-slate-400 mt-0.5">Sign up directly with verified professionals who host remote trial workshops and project placements.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-slate-800 text-xs text-pastel-mint flex items-center justify-between">
+                        <span class="font-bold">Outcome: Absolute Clarity & Zero-Risk Career Freedom</span>
+                        <i class="fa-solid fa-check text-sm"></i>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: COMPARISON TABLE -->
+    <section class="py-16 relative border-b border-darkborder">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h3 class="text-2xl font-bold text-white">PathFinder vs. Traditional Career Approaches</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse glass-panel rounded-2xl overflow-hidden">
+                    <thead>
+                        <tr class="border-b border-slate-800 bg-slate-900/90 text-slate-300">
+                            <th class="p-4 font-bold">Feature</th>
+                            <th class="p-4 font-bold text-red-400">Traditional Major / Career Change</th>
+                            <th class="p-4 font-bold text-pastel-mint">PathFinder Experience</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        <tr>
+                            <td class="p-4 font-semibold text-white">Time Commitment</td>
+                            <td class="p-4 text-red-300">2–4 Years Degree Program</td>
+                            <td class="p-4 text-pastel-mint font-semibold">15-Minute Simulation + 2-Week Micro-Internship</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">Financial Investment</td>
+                            <td class="p-4 text-red-300">$20,000 – $100,000 Tuition</td>
+                            <td class="p-4 text-pastel-mint font-semibold">100% Free / Low-cost At-Home Workshops</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">Work Risk</td>
+                            <td class="p-4 text-red-300">Must quit current job or drop out</td>
+                            <td class="p-4 text-pastel-mint font-semibold">Zero-risk: Learn on evenings & weekends</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">Real-world Insight</td>
+                            <td class="p-4 text-red-300">Theoretical textbook lectures</td>
+                            <td class="p-4 text-pastel-mint font-semibold">Hands-on practical tasks + Verified Industry Mentors</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: INTERACTIVE QUIZ ENGINE -->
+    <section id="quiz-section" class="py-20 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pastel-rose/10 border border-pastel-rose/20 text-pastel-rose text-xs font-bold mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> AI Personality & Interest Engine
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Lost? Find Your Dream Alternative Path</h2>
+                <p class="text-slate-400 text-sm mt-2">Answer 4 quick questions about your personality, risk tolerance, and work style to uncover custom-matched career paths.</p>
+            </div>
+
+            <!-- Interactive Quiz Container Card -->
+            <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-pastel-lavender/30 relative">
+                
+                <!-- Progress Indicator Bar -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                        <span id="quiz-step-label">Step 1 of 4: Motivation & Energy Source</span>
+                        <span id="quiz-progress-percent" class="text-pastel-lavender">25%</span>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                        <div id="quiz-progress-bar" class="bg-gradient-to-r from-pastel-purple via-pastel-lavender to-pastel-mint h-2 rounded-full transition-all duration-500 w-1/4"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Questions Wizard -->
+                <div id="quiz-questions-container">
+                    
+                    <!-- Q1 -->
+                    <div id="question-1" class="quiz-step space-y-4">
+                        <h3 class="text-xl font-bold text-white">What drives you most when working on a project?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="answerQuiz(1, 'technical')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-lavender text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-lavender font-bold text-sm mb-1"><i class="fa-solid fa-code text-xs mr-1"></i> Technical Precision</div>
+                                Solving intricate logical puzzles, analyzing data, or building complex physical/digital systems.
+                            </button>
+                            <button onclick="answerQuiz(1, 'creative')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-rose text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-rose font-bold text-sm mb-1"><i class="fa-solid fa-palette text-xs mr-1"></i> Creative Expression & Senses</div>
+                                Storytelling, aesthetics, culinary crafts, fragrance chemistry, or visual arts.
+                            </button>
+                            <button onclick="answerQuiz(1, 'investigative')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-cyan text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-cyan font-bold text-sm mb-1"><i class="fa-solid fa-newspaper text-xs mr-1"></i> Truth, Research & Impact</div>
+                                Uncovering hidden facts, investigative reporting, life sciences, or environmental protection.
+                            </button>
+                            <button onclick="answerQuiz(1, 'business')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-mint text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-mint font-bold text-sm mb-1"><i class="fa-solid fa-chart-line text-xs mr-1"></i> Strategy & Cyber Security</div>
+                                Strategic leadership, high-stakes negotiation, cloud defense, or business transformation.
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div id="question-2" class="quiz-step space-y-4 hidden">
+                        <h3 class="text-xl font-bold text-white">What is your ideal work environment and sensory pace?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="answerQuiz(2, 'high-intensity')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-peach text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-peach font-bold text-sm mb-1"><i class="fa-solid fa-bolt text-xs mr-1"></i> High Energy & Field Action</div>
+                                Fast-paced environments like race track pit lanes, trauma rooms, or wildlife expeditions.
+                            </button>
+                            <button onclick="answerQuiz(2, 'deep-focus')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-mint text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-mint font-bold text-sm mb-1"><i class="fa-solid fa-brain text-xs mr-1"></i> Deep Focused Craft & Lab</div>
+                                Quiet audio isolation booths, bio labs, artisan kitchens, writing studios, or fragrance labs.
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div id="question-3" class="quiz-step space-y-4 hidden">
+                        <h3 class="text-xl font-bold text-white">How do you feel about high risk vs. high fulfillment?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="answerQuiz(3, 'niche-adventurous')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-rose text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-rose font-bold text-sm mb-1"><i class="fa-solid fa-compass text-xs mr-1"></i> Niche & Adventurous</div>
+                                I want an extraordinary, unique career even if it requires non-traditional pathing.
+                            </button>
+                            <button onclick="answerQuiz(3, 'balanced-high-demand')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-cyan text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-cyan font-bold text-sm mb-1"><i class="fa-solid fa-shield-halved text-xs mr-1"></i> High Demand + Purpose</div>
+                                I want a high-growth field with strong financial reward that also provides deep purpose.
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div id="question-4" class="quiz-step space-y-4 hidden">
+                        <h3 class="text-xl font-bold text-white">How many hours a week can you commit to exploring from home?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="answerQuiz(4, 'casual')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-lavender text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-lavender font-bold text-sm mb-1">3–5 Hours / Week</div>
+                                Weekend evening micro-courses and occasional mentor calls.
+                            </button>
+                            <button onclick="answerQuiz(4, 'intensive')" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-pastel-mint text-left text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800">
+                                <div class="text-pastel-mint font-bold text-sm mb-1">8–12 Hours / Week</div>
+                                Dedicated micro-internships and active hands-on workshop projects.
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Quiz Results Container -->
+                <div id="quiz-results" class="hidden space-y-6">
+                    <div class="text-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pastel-mint/20 text-pastel-mint text-xs font-bold mb-2">
+                            <i class="fa-solid fa-check-circle"></i> Analysis Complete
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-white">Your Top Alternative Career Matches</h3>
+                        <p class="text-slate-400 text-xs mt-1">Based on your traits, we matched you with these high-fulfillment fields:</p>
+                    </div>
+
+                    <div id="quiz-matched-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-pastel-lavender/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">Want your complete 12-page Career Report?</div>
+                                <div class="text-slate-400">Includes salary benchmarks, skill gaps, and transition timelines.</div>
+                            </div>
+                        </div>
+                        <button onclick="sendQuizReportEmail()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-pastel-lavender text-slate-950 font-extrabold hover:bg-pastel-purple transition-all flex items-center justify-center gap-2 shrink-0">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Dispatch to My Gmail</span>
+                        </button>
+                    </div>
+
+                    <div class="text-center pt-2">
+                        <button onclick="resetQuiz()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                            Retake Assessment
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: STUDENT PERSONAS -->
+    <section class="py-16 bg-slate-950/40 border-t border-darkborder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-pastel-cyan mb-2">Student Personas</h3>
+                <p class="text-2xl sm:text-3xl font-bold text-white">Designed For Every Stage of Career Uncertainty</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Persona 1 -->
+                <div class="glass-card p-6 rounded-2xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-pastel-rose/20 text-pastel-rose font-bold text-lg flex items-center justify-center">AL</div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">Alex, 19</h4>
+                                <p class="text-xs text-pastel-rose">Undecided First-Year Student</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            "I felt pressure to pick CS or Finance, but didn't know if I'd like either. PathFinder let me test-drive Cybersecurity and Motorsport Telemetry over two weekends."
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                        <strong class="text-white">Goal:</strong> Discover authentic fit before committing to a major.
+                    </div>
+                </div>
+
+                <!-- Persona 2 -->
+                <div class="glass-card p-6 rounded-2xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-pastel-mint/20 text-pastel-mint font-bold text-lg flex items-center justify-center">PR</div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">Priya, 21</h4>
+                                <p class="text-xs text-pastel-mint">Junior Major Switcher</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            "I was halfway through my Biology major when I realized lab research wasn't for me. PathFinder matched me with Bio-Design Architecture and an active mentor."
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                        <strong class="text-white">Goal:</strong> Pivot to a high-fulfillment field without wasting credits.
+                    </div>
+                </div>
+
+                <!-- Persona 3 -->
+                <div class="glass-card p-6 rounded-2xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-pastel-lavender/20 text-pastel-lavender font-bold text-lg flex items-center justify-center">LE</div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">Leo, 22</h4>
+                                <p class="text-xs text-pastel-lavender">Senior Seeking Micro-Internships</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            "My resume was empty because traditional summer internships were too competitive. Doing 2-week remote micro-internships gave me actual portfolio projects."
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                        <strong class="text-white">Goal:</strong> Gain real-world portfolio proof before graduation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: CAREER EXPLORER / CATALOG -->
+    <section id="career-explorer" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pastel-mint/10 border border-pastel-mint/20 text-pastel-mint text-xs font-bold mb-3">
+                        <i class="fa-solid fa-compass text-xs"></i> Exploration Engine
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Comprehensive Career Catalog</h2>
+                    <p class="text-slate-400 text-sm mt-2">Filter across traditional, medical, creative, journalism, and niche high-risk careers.</p>
+                </div>
+
+                <!-- Search Bar & Controls -->
+                <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        <input type="text" id="career-search-input" onkeyup="filterCareers()" placeholder="Search (e.g. Motorsport, Bio-Design, Audio, Drone)..." class="w-full sm:w-72 bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:border-pastel-lavender outline-none transition-colors">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="flex flex-wrap gap-2 mb-8" id="category-pills">
+                <button onclick="setCategoryFilter('all')" class="cat-pill active px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-pastel-lavender text-slate-950 font-bold shadow-md shadow-pastel-lavender/20">All Fields</button>
+                <button onclick="setCategoryFilter('Engineering')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-400 hover:text-white border border-slate-800">Engineering</button>
+                <button onclick="setCategoryFilter('Medical & Biotech')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-400 hover:text-white border border-slate-800">Medical & Biotech</button>
+                <button onclick="setCategoryFilter('Culinary Arts')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-400 hover:text-white border border-slate-800">Culinary Arts</button>
+                <button onclick="setCategoryFilter('Journalism & Media')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-400 hover:text-white border border-slate-800">Journalism & Media</button>
+                <button onclick="setCategoryFilter('Business & Tech')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-400 hover:text-white border border-slate-800">Business & Tech</button>
+                <button onclick="setCategoryFilter('Niche & High-Risk')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-pastel-rose hover:text-white border border-pastel-rose/30">🔥 Niche / High-Risk</button>
+            </div>
+
+            <!-- Career Cards Grid -->
+            <div id="careers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: ACCESSIBILITY & INCLUSIVITY -->
+    <section class="py-16 bg-slate-950/60 border-t border-darkborder">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel p-8 rounded-3xl border border-pastel-lavender/20 flex flex-col md:flex-row items-center gap-6">
+                <div class="w-16 h-16 rounded-2xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-3xl shrink-0">
+                    <i class="fa-solid fa-universal-access"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Built For Inclusive & Accessible Career Exploration</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        PathFinder believes career discovery should be accessible to everyone regardless of socio-economic background, geographic location, or physical disability. All simulations and micro-internships are 100% remote, screen-reader optimized, and designed with flexible scheduling.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: RESEARCH & EVIDENCE BLOCKS -->
+    <section class="py-16 border-t border-darkborder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-pastel-peach mb-2">Evidence-Based Methodology</h3>
+                <p class="text-2xl font-bold text-white">Backed by Career Psychology & Education Data</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl border border-darkborder">
+                    <div class="text-pastel-peach text-sm font-bold mb-2">📚 Experiential Learning Theory (Kolb)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Research shows active simulation and experiential test-drives lead to a 4x increase in career retention and job satisfaction compared to passive reading or advice columns.
+                    </p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border border-darkborder">
+                    <div class="text-pastel-cyan text-sm font-bold mb-2">📊 Early Internship Impact Studies</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Students who participate in short-form micro-internships report 89% higher confidence when making career or major selection decisions before graduation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="career-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-300">
+        <div class="glass-panel border border-slate-700 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+            
+            <!-- Close Button -->
+            <button onclick="closeCareerModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors text-xl z-10 w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center gap-4 mb-6">
+                <div id="modal-icon-container" class="w-14 h-14 rounded-2xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-2xl shrink-0">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="modal-category" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pastel-lavender/20 text-pastel-lavender uppercase tracking-wide">Category</span>
+                        <span id="modal-demand" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pastel-mint/20 text-pastel-mint">🔥 High Growth</span>
+                    </div>
+                    <h3 id="modal-title" class="text-2xl font-extrabold text-white mt-1">Career Title</h3>
+                </div>
+            </div>
+
+            <!-- Modal Tabs Nav -->
+            <div class="flex border-b border-slate-800 gap-6 mb-6 overflow-x-auto">
+                <button id="modal-tab-1" onclick="switchModalTab('overview')" class="pb-3 text-xs font-bold text-pastel-lavender border-b-2 border-pastel-lavender flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-chart-pie"></i> Field Intel & Global Salaries
+                </button>
+                <button id="modal-tab-2" onclick="switchModalTab('course')" class="pb-3 text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-graduation-cap"></i> Step 1: Mastery Micro-Course
+                </button>
+                <button id="modal-tab-3" onclick="switchModalTab('mentor')" class="pb-3 text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-user-check"></i> Step 2: Internship & Workshop
+                </button>
+            </div>
+
+            <!-- TAB 1: OVERVIEW & SALARIES -->
+            <div id="modal-section-overview" class="space-y-6">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Unvarnished Daily Reality</h4>
+                    <p id="modal-description" class="text-sm text-slate-300 leading-relaxed bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                        Description text goes here...
+                    </p>
+                </div>
+
+                <!-- Interactive Salary & Country Selector -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Average Salary Breakdown</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-slate-400">Select Region:</span>
+                            <select id="country-salary-select" onchange="updateSalaryDisplay()" class="bg-slate-900 border border-slate-700 text-xs text-pastel-mint font-bold rounded-lg px-2.5 py-1 outline-none">
+                                <option value="USA">🇺🇸 United States</option>
+                                <option value="UAE">🇦🇪 UAE (Dubai/Abu Dhabi)</option>
+                                <option value="UK">🇬🇧 United Kingdom</option>
+                                <option value="DE">🇩🇪 Germany / EU</option>
+                                <option value="SG">🇸🇬 Singapore</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-semibold">Selected Country Average</div>
+                            <div id="display-selected-salary" class="text-xl font-extrabold text-pastel-mint mt-1">$145,000 /yr</div>
+                        </div>
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-semibold">Global Remote Average</div>
+                            <div id="modal-remote-salary" class="text-xl font-extrabold text-pastel-cyan mt-1">$115,000 /yr</div>
+                        </div>
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-semibold">5-Year Growth Rate</div>
+                            <div id="modal-growth-rate" class="text-xl font-extrabold text-pastel-rose mt-1">+24%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Adoption Statistics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <h5 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-pastel-lavender"></i> Regret vs Pursuit Ratio
+                        </h5>
+                        <div class="space-y-1.5 text-xs text-slate-400">
+                            <div class="flex justify-between">
+                                <span>People who wished they chose this:</span>
+                                <strong id="stat-regret-percent" class="text-pastel-peach">78%</strong>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Who actually made the switch:</span>
+                                <strong id="stat-switched-percent" class="text-pastel-mint">14%</strong>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Day-to-day fulfillment score:</span>
+                                <strong id="stat-fulfillment-score" class="text-pastel-cyan">9.2/10</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <h5 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-cat text-pastel-rose"></i> Risk Profile & Transition
+                        </h5>
+                        <div class="space-y-1.5 text-xs text-slate-400">
+                            <div class="flex justify-between">
+                                <span>Perceived Entry Risk:</span>
+                                <span id="risk-rating-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">Moderate Risk</span>
+                            </div>
+                            <div>• <strong class="text-slate-200">No prior degree required</strong> if micro-course is passed.</div>
+                            <div>• <strong class="text-slate-200">100% remote weekend internship options</strong> available.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end">
+                    <button onclick="switchModalTab('course')" class="px-6 py-3 rounded-xl bg-pastel-lavender hover:bg-pastel-purple text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-pastel-lavender/20">
+                        <span>Proceed to Required Micro-Course (Step 1)</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: MASTERY MICRO-COURSE -->
+            <div id="modal-section-course" class="space-y-6 hidden">
+                <div class="p-4 rounded-2xl bg-pastel-lavender/10 border border-pastel-lavender/20 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase text-pastel-lavender">Step 1 Qualification</span>
+                        <h4 id="course-title" class="text-base font-bold text-white">Fundamentals Crash Module</h4>
+                    </div>
+                    <span class="text-xs bg-pastel-lavender text-slate-950 font-bold px-3 py-1 rounded-full">15 Mins Simulation</span>
+                </div>
+
+                <!-- Course Module Checklist -->
+                <div class="space-y-3">
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <button onclick="toggleChapter(1)" id="check-btn-1" class="w-6 h-6 rounded-lg border border-slate-600 flex items-center justify-center text-xs hover:border-pastel-mint">
+                                <i class="fa-solid fa-check text-pastel-mint hidden" id="check-icon-1"></i>
+                            </button>
+                            <div>
+                                <div class="text-xs font-bold text-white">Chapter 1: Industry Ecosystem & Core Terminology</div>
+                                <div class="text-[10px] text-slate-400">Master fundamental tools, key software, and daily workflow expectations.</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-slate-500 font-semibold">5 mins</span>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <button onclick="toggleChapter(2)" id="check-btn-2" class="w-6 h-6 rounded-lg border border-slate-600 flex items-center justify-center text-xs hover:border-pastel-mint">
+                                <i class="fa-solid fa-check text-pastel-mint hidden" id="check-icon-2"></i>
+                            </button>
+                            <div>
+                                <div class="text-xs font-bold text-white">Chapter 2: Hands-On Micro Task Simulation</div>
+                                <div class="text-[10px] text-slate-400">Work through a real-world case study exercise.</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-slate-500 font-semibold">10 mins</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Aptitude Quiz -->
+                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                    <div class="text-xs font-bold text-pastel-cyan uppercase tracking-wider">Aptitude Self-Check Quiz</div>
+                    <p id="quiz-question" class="text-xs text-white font-semibold">Which aspect of this career path excites you most?</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="quiz-options">
+                        <button onclick="selectCourseQuizOption(this)" class="p-3 rounded-xl bg-slate-800 text-xs text-slate-300 hover:bg-slate-700 text-left transition-colors">A) High-level strategy & conceptual problem solving</button>
+                        <button onclick="selectCourseQuizOption(this)" class="p-3 rounded-xl bg-slate-800 text-xs text-slate-300 hover:bg-slate-700 text-left transition-colors">B) Deep technical execution & specialized tools</button>
+                    </div>
+                    <div id="course-quiz-result" class="hidden p-3 rounded-xl bg-pastel-mint/10 border border-pastel-mint/30 text-xs text-pastel-mint font-semibold">
+                        ✅ Micro-Course Qualified! You are eligible to book a direct internship/workshop with an industry mentor.
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between">
+                    <button onclick="switchModalTab('overview')" class="px-4 py-2.5 rounded-xl bg-slate-800 text-xs text-slate-300 font-semibold">
+                        Back to Field Intel
+                    </button>
+                    <button onclick="switchModalTab('mentor')" class="px-6 py-3 rounded-xl bg-pastel-mint text-slate-950 hover:bg-emerald-300 font-extrabold text-xs flex items-center gap-2">
+                        <span>Unlock Mentor & Internship (Step 2)</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 3: MENTOR & INTERNSHIP BOOKING -->
+            <div id="modal-section-mentor" class="space-y-6 hidden">
+                <div class="p-4 rounded-2xl bg-pastel-purple/10 border border-pastel-purple/30 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase text-pastel-lavender">Step 2 Industry Connection</span>
+                        <h4 class="text-base font-bold text-white">Verified Mentors Offering Virtual Internships</h4>
+                    </div>
+                    <span class="text-xs bg-pastel-purple text-slate-950 font-bold px-3 py-1 rounded-full">Remote / Home-Based</span>
+                </div>
+
+                <!-- Mentor Profile Card -->
+                <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pastel-purple to-pastel-mint flex items-center justify-center font-extrabold text-slate-950 text-lg">
+                            DR
+                        </div>
+                        <div>
+                            <div class="text-sm font-bold text-white flex items-center gap-2">
+                                <span id="mentor-name">Dr. Elena Vance</span>
+                                <i class="fa-solid fa-circle-check text-pastel-mint text-xs" title="Verified Professional"></i>
+                            </div>
+                            <div class="text-xs text-slate-400" id="mentor-title">Senior Lead Practitioner</div>
+                            <div class="text-[10px] text-pastel-cyan mt-0.5">Hosting 2-Week Virtual Internships & Weekend Workshops</div>
+                        </div>
+                    </div>
+
+                    <button onclick="bookMentorSession()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-pastel-lavender to-pastel-mint text-slate-950 font-extrabold text-xs shadow-md hover:scale-105 transition-all">
+                        Request Virtual Internship Signup
+                    </button>
+                </div>
+
+                <!-- Internship Details -->
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <h5 class="text-xs font-bold text-slate-200">What the Home Micro-Internship Includes:</h5>
+                    <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+                        <li>2x 45-min weekly 1-on-1 video mentorship reviews.</li>
+                        <li>An authentic real-world brief assigned directly by the mentor.</li>
+                        <li>Portfolio feedback + official PathFinder LinkedIn completion badge.</li>
+                    </ul>
+                </div>
+
+                <div id="booking-success" class="hidden p-4 rounded-2xl bg-pastel-mint/10 border border-pastel-mint/40 text-xs text-pastel-mint flex items-center gap-3">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    <div>
+                        <div class="font-bold">Virtual Internship Application Submitted!</div>
+                        <div>Your mentor will review your micro-course completion and contact you within 24 hours.</div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-start">
+                    <button onclick="switchModalTab('course')" class="px-4 py-2.5 rounded-xl bg-slate-800 text-xs text-slate-300 font-semibold">
+                        Back to Course
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <section id="counselling-section" class="py-20 bg-slate-950/60 border-t border-darkborder relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pastel-rose/10 border border-pastel-rose/20 text-pastel-rose text-xs font-bold mb-3">
+                    <i class="fa-solid fa-heart-pulse text-xs"></i> Mental Health & Career Counseling Sanctuary
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Stuck, Burnt Out, or Anxious About Risk?</h2>
+                <p class="text-slate-400 mt-3 text-sm sm:text-base">
+                    Career pivoting is emotionally challenging. Get guidance from specialized career psychologists and transition coaches.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Feature 1: Burnout Check -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-rose/20 text-pastel-rose flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-battery-quarter"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Burnout & Risk Assessment</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Evaluate whether you are suffering from acute workplace fatigue or true career misalignment using our clinical 5-minute self-check.
+                    </p>
+                    <button onclick="openBurnoutModal()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-rose transition-colors">
+                        Take Burnout Check
+                    </button>
+                </div>
+
+                <!-- Feature 2: 1-on-1 Coaching -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">1-on-1 Transition Counseling</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Book virtual sessions with licensed psychologists specializing in decision paralysis, golden-handcuffs syndrome, and mid-career confidence.
+                    </p>
+                    <button onclick="bookCounselorSession()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-lavender transition-colors">
+                        Book Virtual Counseling
+                    </button>
+                </div>
+
+                <!-- Feature 3: Financial Risk Calculator -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-mint/20 text-pastel-mint flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Transition Runway Planner</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Calculate exact savings runway and part-time transition strategies to switch fields without missing a single bill payment.
+                    </p>
+                    <button onclick="openRunwayModal()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-mint transition-colors">
+                        Calculate Financial Runway
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="community-hub" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pastel-cyan/10 border border-pastel-cyan/20 text-pastel-cyan text-xs font-bold mb-3">
+                    <i class="fa-solid fa-users text-xs"></i> Peer Pathfinder Network
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Connect with People Exploring the Same Path</h2>
+                <p class="text-slate-400 mt-3 text-sm sm:text-base">
+                    Don't explore alone. Join virtual study circles, form accountability groups, and swap real-world transition feedback.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                
+                <!-- Peer Card 1 -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-2xl bg-pastel-rose/20 text-pastel-rose font-bold flex items-center justify-center text-sm">
+                                SK
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white">Sarah K.</div>
+                                <div class="text-[10px] text-slate-400">Current: Auditor ➔ Exploring: Bio-Design Architect</div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            "After 6 years in corporate audit, I completed the Bio-Design micro-course and joined a weekend remote workshop. PathFinder gave me the courage to test the waters!"
+                        </p>
+                    </div>
+                    <button onclick="connectPeer('Sarah K.')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-lavender transition-colors">
+                        Connect with Sarah
+                    </button>
+                </div>
+
+                <!-- Peer Card 2 -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-2xl bg-pastel-mint/20 text-pastel-mint font-bold flex items-center justify-center text-sm">
+                                MA
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white">Marcus A.</div>
+                                <div class="text-[10px] text-slate-400">Current: Sales ➔ Exploring: Motorsport Telemetry</div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            "Always thought motorsport engineering required being born in Europe. The telemetry micro-internship showed me how data sensors actually work!"
+                        </p>
+                    </div>
+                    <button onclick="connectPeer('Marcus A.')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-mint transition-colors">
+                        Connect with Marcus
+                    </button>
+                </div>
+
+                <!-- Peer Card 3 -->
+                <div class="glass-card p-6 rounded-3xl border border-darkborder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-2xl bg-pastel-peach/20 text-pastel-peach font-bold flex items-center justify-center text-sm">
+                                EL
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white">Elena L.</div>
+                                <div class="text-[10px] text-slate-400">Current: Teacher ➔ Exploring: Artisan Chocolatier</div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            "Formed a study circle with 3 other switchers. Having a master chocolatier walk us through bean crystallization via video calls was magical."
+                        </p>
+                    </div>
+                    <button onclick="connectPeer('Elena L.')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-pastel-peach transition-colors">
+                        Connect with Elena
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-pastel-lavender/30 relative overflow-hidden">
+                <div class="max-w-3xl mx-auto text-center space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-xl mx-auto mb-2">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">Weekly Niche Career Intelligence Dispatch</h3>
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        Join 28,000+ career explorers. Receive exclusive breakdown briefs on high-growth unadvertised roles, mentor remote shadow opportunities, and salary indexes delivered directly to your Gmail inbox every Tuesday.
+                    </p>
+
+                    <form onsubmit="handleNewsletterSubscribe(event)" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto pt-2">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-envelope absolute left-4 top-3.5 text-slate-500 text-xs"></i>
+                            <input type="email" id="newsletter-email-input" required placeholder="Enter your Gmail address..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-xs text-white focus:border-pastel-lavender outline-none transition-colors">
+                        </div>
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-pastel-purple via-pastel-lavender to-pastel-mint text-slate-950 font-extrabold text-xs shadow-lg shadow-pastel-lavender/20 hover:scale-105 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Subscribe Dispatch</span>
+                        </button>
+                    </form>
+
+                    <div id="newsletter-status" class="hidden text-xs text-pastel-mint font-semibold pt-2">
+                        <i class="fa-solid fa-circle-check mr-1"></i> Subscription confirmed! Check your Gmail inbox preview.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- GMAIL SYNC MODAL -->
+    <div id="gmail-sync-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel border border-slate-700 rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl">
+            <button onclick="closeGmailSyncModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="text-center space-y-3 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-pastel-rose/20 text-pastel-rose flex items-center justify-center text-2xl mx-auto border border-pastel-rose/30">
+                    <i class="fa-brands fa-google"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Gmail Integration Center</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Connect your Google account or specify your preferred Gmail address to receive automated career reports, mentor workshop invites, and counseling confirmations.
+                </p>
+            </div>
+
+            <form onsubmit="handleSaveGmail(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Your Gmail Address</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-at absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        <input type="email" id="modal-gmail-input" required placeholder="username@gmail.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:border-pastel-mint outline-none transition-colors">
+                    </div>
+                </div>
+
+                <!-- Simulation Quick Connect Google Button -->
+                <button type="button" onclick="simulateGoogleOAuth()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-brands fa-google text-pastel-rose"></i>
+                    <span>One-Click OAuth Connect (Simulated)</span>
+                </button>
+
+                <div class="pt-2 border-t border-slate-800 space-y-2">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Preferences</div>
+                    <label class="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="pref-quiz-reports" checked class="rounded bg-slate-900 border-slate-700 text-pastel-lavender focus:ring-0">
+                        <span>Career Quiz Results & PDF Reports</span>
+                    </label>
+                    <label class="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="pref-mentor-invites" checked class="rounded bg-slate-900 border-slate-700 text-pastel-lavender focus:ring-0">
+                        <span>Mentor Workshop Invites & Micro-Courses</span>
+                    </label>
+                    <label class="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="pref-counseling-reminders" checked class="rounded bg-slate-900 border-slate-700 text-pastel-lavender focus:ring-0">
+                        <span>Mental Health & Counseling Reminders</span>
+                    </label>
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="submit" class="w-full py-3 rounded-xl bg-pastel-mint text-slate-950 font-extrabold text-xs hover:bg-emerald-300 transition-all shadow-md">
+                        Save Preferences & Sync
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EMAIL PREVIEW MODAL TOAST -->
+    <div id="email-preview-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="glass-panel border border-pastel-lavender/40 rounded-3xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-inbox"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-pastel-mint flex items-center gap-1.5">
+                            <i class="fa-solid fa-paper-plane text-[10px]"></i> Gmail Dispatch Simulated
+                        </div>
+                        <h4 class="text-base font-bold text-white">View Email Sent to Inbox</h4>
+                    </div>
+                </div>
+                <button onclick="closeEmailPreviewModal()" class="text-slate-400 hover:text-white transition-colors w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Email Container Rendering Mock Email -->
+            <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-xs space-y-3 font-sans">
+                <div class="flex justify-between text-slate-400 border-b border-slate-800 pb-2">
+                    <div><strong>To:</strong> <span id="preview-email-to" class="text-pastel-cyan">user@gmail.com</span></div>
+                    <div><strong>From:</strong> updates@pathfinder-careers.com</div>
+                </div>
+                <div class="text-slate-300 border-b border-slate-800 pb-2">
+                    <strong>Subject:</strong> <span id="preview-email-subject" class="text-white font-bold">Career Report</span>
+                </div>
+                <div id="preview-email-body" class="text-slate-300 leading-relaxed pt-2 space-y-2">
+                    <!-- Dynamic Email Content -->
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-2">
+                <span class="text-[10px] text-slate-500">Local simulation saved to Pathfinder Session</span>
+                <button onclick="closeEmailPreviewModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">
+                    Close Preview
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           CAREER DATABASE & DATA MODEL (Includes Niche & Traditional Paths)
+           ========================================================================== */
+        const CAREERS = [
+            {
+                id: "motorsport-telemetry",
+                title: "Motorsport Telemetry & Data Engineer",
+                category: "Niche & High-Risk",
+                icon: "fa-car-side",
+                demand: "🔥 Extremely Rare",
+                riskBadge: "High Risk / High Reward",
+                salaries: {
+                    USA: "$135,000",
+                    UAE: "AED 380,000",
+                    UK: "£85,000",
+                    DE: "€95,000",
+                    SG: "S$140,000"
+                },
+                remoteSalary: "$110,000",
+                growthRate: "+18%",
+                regretPercent: "84%",
+                switchedPercent: "6%",
+                fulfillmentScore: "9.6/10",
+                description: "Analyze real-time sensor telemetry from high-performance race vehicles during track sessions, optimizing tire degradation, hybrid deployment, and aero strategy.",
+                dayInLife: "Monitoring live signal streams from 200+ vehicle sensors, running lap simulations in MATLAB/Python under intense pit-wall pressure, and tweaking engine mapping.",
+                courseTitle: "Racecar Sensor Dynamics & Telemetry Signal Crash Module",
+                mentorName: "Marco Rossi",
+                mentorRole: "Former Lead Telemetry Engineer at Apex Racing"
+            },
+            {
+                id: "forensic-audio-engineer",
+                title: "Forensic Audio & Signal Reconstruction Specialist",
+                category: "Niche & High-Risk",
+                icon: "fa-wave-square",
+                demand: "🔥 High Demand",
+                riskBadge: "Moderate Risk",
+                salaries: {
+                    USA: "$115,000",
+                    UAE: "AED 310,000",
+                    UK: "£72,000",
+                    DE: "€80,000",
+                    SG: "S$120,000"
+                },
+                remoteSalary: "$98,000",
+                growthRate: "+22%",
+                regretPercent: "79%",
+                switchedPercent: "8%",
+                fulfillmentScore: "9.3/10",
+                description: "Clean, analyze, and authenticate legal audio evidence, flight recorder black boxes, and surveillance recordings using spectral analysis and DSP algorithms.",
+                dayInLife: "Isolating hidden acoustic reflections in spectral decibel graphs, running de-noise phase filters, and authoring expert witness forensic sound reports.",
+                courseTitle: "Spectral Sound Analysis & Audio Forensic Authentication",
+                mentorName: "Dr. Aris Vance",
+                mentorRole: "Chief Forensic Audio Examiner at SoundClarity Labs"
+            },
+            {
+                id: "bio-design-architect",
+                title: "Bio-Design Architect & Regenerative Designer",
+                category: "Engineering",
+                icon: "fa-dna",
+                demand: "🔥 Emerging Field",
+                riskBadge: "Moderate Risk",
+                salaries: {
+                    USA: "$128,000",
+                    UAE: "AED 340,000",
+                    UK: "£78,000",
+                    DE: "€88,000",
+                    SG: "S$130,000"
+                },
+                remoteSalary: "$105,000",
+                growthRate: "+32%",
+                regretPercent: "76%",
+                switchedPercent: "9%",
+                fulfillmentScore: "9.4/10",
+                description: "Design living architectural structures and urban materials cultivated from mycelium, algae, and self-healing bio-composites.",
+                dayInLife: "Cultivating structural fungal mycelium cultures, modeling parametric bio-structures in Rhino/Grasshopper, and testing insulation thermal performance.",
+                courseTitle: "Mycelium Architecture & Living Materials Fundamentals",
+                mentorName: "Dr. Maya Lin",
+                mentorRole: "Director of Bio-Structures at Living Habitat Lab"
+            },
+            {
+                id: "investigative-journalism",
+                title: "Investigative Reporter & OSINT Analyst",
+                category: "Journalism & Media",
+                icon: "fa-newspaper",
+                demand: "High Fulfillment",
+                riskBadge: "High Risk",
+                salaries: {
+                    USA: "$92,000",
+                    UAE: "AED 260,000",
+                    UK: "£58,000",
+                    DE: "€64,000",
+                    SG: "S$95,000"
+                },
+                remoteSalary: "$85,000",
+                growthRate: "+12%",
+                regretPercent: "89%",
+                switchedPercent: "11%",
+                fulfillmentScore: "9.1/10",
+                description: "Uncover high-impact global stories using Open Source Intelligence (OSINT), satellite imagery analysis, and deep investigative field interviews.",
+                dayInLife: "Verifying satellite imagery metadata, tracking supply chain dark-fleet logistics, cross-referencing public corporate registries, and drafting long-form exposés.",
+                courseTitle: "OSINT Verification & Satellite Data Investigation Module",
+                mentorName: "Julian Vance",
+                mentorRole: "Senior OSINT Editor at TruthScope Global"
+            },
+            {
+                id: "artisan-chocolatier",
+                title: "Specialty Artisan Chocolatier & Flavorist",
+                category: "Culinary Arts",
+                icon: "fa-utensils",
+                demand: "Niche Craft",
+                riskBadge: "Moderate Risk",
+                salaries: {
+                    USA: "$88,000",
+                    UAE: "AED 240,000",
+                    UK: "£52,000",
+                    DE: "€60,000",
+                    SG: "S$90,000"
+                },
+                remoteSalary: "$70,000",
+                growthRate: "+15%",
+                regretPercent: "81%",
+                switchedPercent: "8%",
+                fulfillmentScore: "9.5/10",
+                description: "Craft single-origin bean-to-bar artisan chocolates, master cocoa crystal tempering science, and formulate innovative botanical flavor pairings.",
+                dayInLife: "Sourcing heirloom cocoa beans, monitoring conching machine shear forces, tempering molten chocolate at precise 31°C curves, and tasting flavor extractions.",
+                courseTitle: "Bean-to-Bar Crystallization & Flavor Chemistry Course",
+                mentorName: "Chef Antoine Laurent",
+                mentorRole: "Master Artisan at Maison du Cacao"
+            },
+            {
+                id: "perfumer-master-nose",
+                title: "Master Nose & Botanical Fragrance Chemist",
+                category: "Niche & High-Risk",
+                icon: "fa-flask font-awesome",
+                demand: "🔥 Rare Artisan",
+                riskBadge: "High Risk",
+                salaries: {
+                    USA: "$140,000",
+                    UAE: "AED 390,000",
+                    UK: "£90,000",
+                    DE: "€100,000",
+                    SG: "S$145,000"
+                },
+                remoteSalary: "$105,000",
+                growthRate: "+16%",
+                regretPercent: "87%",
+                switchedPercent: "4%",
+                fulfillmentScore: "9.7/10",
+                description: "Formulate fine fragrances and olfactory branding notes using rare natural extracts, synthetic aroma molecules, and accords balance.",
+                dayInLife: "Evaluating olfactory volatile evaporation curves on blotter strips, balancing top/middle/base notes in gas chromatography logs, and blending floral absolutes.",
+                courseTitle: "Olfactory Accord Balancing & Perfumery Chemistry",
+                mentorName: "Camille Dubois",
+                mentorRole: "Senior Perfumer at Atelier Olfactif"
+            },
+            {
+                id: "wildlife-drone-pilot",
+                title: "Wildlife Conservation Drone Pilot & Field Tracker",
+                category: "Niche & High-Risk",
+                icon: "fa-compass-drafting",
+                demand: "High Purpose",
+                riskBadge: "Moderate Risk",
+                salaries: {
+                    USA: "$95,000",
+                    UAE: "AED 270,000",
+                    UK: "£62,000",
+                    DE: "€70,000",
+                    SG: "S$100,000"
+                },
+                remoteSalary: "$82,000",
+                growthRate: "+28%",
+                regretPercent: "91%",
+                switchedPercent: "7%",
+                fulfillmentScore: "9.8/10",
+                description: "Deploy long-range thermal mapping drones over vulnerable biomes to count endangered species, prevent poaching, and map forest canopy health.",
+                dayInLife: "Configuring waypoint flight plans in autonomous ground station software, analyzing thermal video feeds for species signatures, and coordinating ranger units.",
+                courseTitle: "Thermal Mapping Flight Operations & Wildlife Tracking",
+                mentorName: "Karan Sharma",
+                mentorRole: "Lead Expedition Operator for BioSky Global"
+            },
+            {
+                id: "fetal-biotech-specialist",
+                title: "Biotech Embryo Gene Therapy Specialist",
+                category: "Medical & Biotech",
+                icon: "fa-microscope",
+                demand: "🔥 Extreme Growth",
+                riskBadge: "Low Risk / High Rigor",
+                salaries: {
+                    USA: "$175,000",
+                    UAE: "AED 420,000",
+                    UK: "£110,000",
+                    DE: "€125,000",
+                    SG: "S$180,000"
+                },
+                remoteSalary: "$130,000",
+                growthRate: "+40%",
+                regretPercent: "71%",
+                switchedPercent: "15%",
+                fulfillmentScore: "9.3/10",
+                description: "Develop CRISPR precision gene-editing protocols to eradicate hereditary genetic conditions prior to cellular implantation.",
+                dayInLife: "Performing micromanipulation under high-power fluorescence microscopes, sequencing viral vector delivery efficiency, and reviewing clinical trials.",
+                courseTitle: "CRISPR Target Design & Micro-Injection Simulation",
+                mentorName: "Dr. Elena Vance",
+                mentorRole: "Principal Geneticist at GeneThera Labs"
+            },
+            {
+                id: "ethical-hacker",
+                title: "Cybersecurity Red-Team Penetration Tester",
+                category: "Business & Tech",
+                icon: "fa-shield-halved",
+                demand: "🔥 Extreme Demand",
+                riskBadge: "Low Risk",
+                salaries: {
+                    USA: "$150,000",
+                    UAE: "AED 360,000",
+                    UK: "£95,000",
+                    DE: "€105,000",
+                    SG: "S$155,000"
+                },
+                remoteSalary: "$135,000",
+                growthRate: "+35%",
+                regretPercent: "68%",
+                switchedPercent: "22%",
+                fulfillmentScore: "8.9/10",
+                description: "Simulate advanced adversary attacks on corporate networks, cloud infrastructure, and industrial hardware systems to identify zero-day vulnerabilities.",
+                dayInLife: "Writing custom Python exploit scripts, probing active network ports, analyzing reverse-engineered assembly code, and compiling security patch audits.",
+                courseTitle: "Hands-On Cloud Penetration Testing & Network Defense",
+                mentorName: "Sarah Jenkins",
+                mentorRole: "Red Team Lead at Fortify Security"
+            }
+        ];
+
+        let activeCategory = 'all';
+        let currentActiveCareer = null;
+        let quizAnswers = {};
+
+        // User Gmail Sync State
+        let userGmail = localStorage.getItem('pathfinder_gmail') || '';
+
+        /* ==========================================================================
+           INITIALIZATION & RENDER
+           ========================================================================== */
+        window.onload = function() {
+            renderCareersGrid(CAREERS);
+            updateGmailUI();
+
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+        };
+
+        function openGmailSyncModal() {
+            document.getElementById('modal-gmail-input').value = userGmail;
+            document.getElementById('gmail-sync-modal').classList.remove('hidden');
+        }
+
+        function closeGmailSyncModal() {
+            document.getElementById('gmail-sync-modal').classList.add('hidden');
+        }
+
+        function handleSaveGmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('modal-gmail-input').value;
+            if (email) {
+                userGmail = email;
+                localStorage.setItem('pathfinder_gmail', userGmail);
+                updateGmailUI();
+                closeGmailSyncModal();
+
+                triggerEmailPreview(
+                    userGmail,
+                    "⚡ Gmail Integration Confirmed — PathFinder Explorer",
+                    `<p>Hello Explorer,</p>
+                     <p>Your Gmail address (<strong>${userGmail}</strong>) is now synced with PathFinder. You will receive real-time micro-course completions, mentor workshop credentials, and counselor booking updates directly here.</p>
+                     <div style="background: rgba(168,240,224,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(168,240,224,0.3); margin-top: 10px;">
+                        <strong>Status:</strong> Active & Ready for Career Test-Drives.
+                     </div>`
+                );
+            }
+        }
+
+        function simulateGoogleOAuth() {
+            const simulatedEmail = "explorer.demo@gmail.com";
+            document.getElementById('modal-gmail-input').value = simulatedEmail;
+            userGmail = simulatedEmail;
+            localStorage.setItem('pathfinder_gmail', userGmail);
+            updateGmailUI();
+            closeGmailSyncModal();
+
+            triggerEmailPreview(
+                userGmail,
+                "🎉 Google Account Connected — PathFinder Sync",
+                `<p>Welcome to PathFinder!</p>
+                 <p>Your Google account <strong>${simulatedEmail}</strong> has been authenticated via OAuth. Your personalized career transition roadmap is now linked.</p>`
+            );
+        }
+
+        function updateGmailUI() {
+            const btnText = document.getElementById('gmail-btn-text');
+            const statusDot = document.getElementById('gmail-status-dot');
+
+            if (userGmail) {
+                btnText.innerText = userGmail.length > 18 ? userGmail.substring(0, 15) + '...' : userGmail;
+                statusDot.className = "w-2 h-2 rounded-full bg-pastel-mint animate-pulse";
+            } else {
+                btnText.innerText = "Connect Gmail";
+                statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
+            }
+        }
+
+        function triggerEmailPreview(toEmail, subject, htmlBody) {
+            document.getElementById('preview-email-to').innerText = toEmail || 'guest@gmail.com';
+            document.getElementById('preview-email-subject').innerText = subject;
+            document.getElementById('preview-email-body').innerHTML = htmlBody;
+            document.getElementById('email-preview-modal').classList.remove('hidden');
+        }
+
+        function closeEmailPreviewModal() {
+            document.getElementById('email-preview-modal').classList.add('hidden');
+        }
+
+        function handleNewsletterSubscribe(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('newsletter-email-input').value;
+            if (!userGmail) {
+                userGmail = emailInput;
+                localStorage.setItem('pathfinder_gmail', userGmail);
+                updateGmailUI();
+            }
+
+            document.getElementById('newsletter-status').classList.remove('hidden');
+
+            triggerEmailPreview(
+                emailInput,
+                "📬 Subscription Confirmed: Pathfinder Weekly Niche Dispatch",
+                `<p>Welcome to the PathFinder Explorer Network!</p>
+                 <p>You are now subscribed to receive our weekly deep-dive reports every Tuesday. Upcoming issues include:</p>
+                 <ul>
+                     <li>• Motorsport Telemetry Trackside Salaries in Europe vs. Middle East</li>
+                     <li>• Bio-Design Mycelium Lab Grants & Weekend Remote Internships</li>
+                     <li>• How Forensic Audio Experts Detect Voice Synthetic Spoofing</li>
+                 </ul>
+                 <p>Stay curious,</p>
+                 <p><strong>PathFinder Editorial Team</strong></p>`
+            );
+        }
+
+        function sendQuizReportEmail() {
+            const targetEmail = userGmail || "user@gmail.com";
+            triggerEmailPreview(
+                targetEmail,
+                "📊 Your 12-Page Comprehensive Career Personality Assessment Report",
+                `<p>Hello Explorer,</p>
+                 <p>Attached is your custom 12-page <strong>PathFinder Career Personality & Pivot Report</strong> based on your assessment response.</p>
+                 <div style="background: rgba(216,180,254,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(216,180,254,0.3); margin: 10px 0;">
+                    <strong>Matched Paths:</strong>
+                    <br>1. Motorsport Telemetry Engineer (96% Match)
+                    <br>2. Forensic Audio & Spectral Examiner (92% Match)
+                 </div>
+                 <p>You can access your required 15-minute micro-courses directly from your dashboard.</p>`
+            );
+        }
+
+        function renderCareersGrid(careers) {
+            const grid = document.getElementById('careers-grid');
+            grid.innerHTML = '';
+
+            if (careers.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500 text-sm">
+                        No careers found matching your search. Try searching for "Motorsport", "Bio", "Audio", "Journalism", or "Artisan".
+                    </div>
+                `;
+                return;
+            }
+
+            careers.forEach(career => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-6 rounded-3xl border border-darkborder flex flex-col justify-between cursor-pointer group';
+                card.onclick = () => openCareerModal(career.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-pastel-lavender/10 border border-pastel-lavender/20 text-pastel-lavender flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid ${career.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-pastel-mint">
+                                ${career.demand}
+                            </span>
+                        </div>
+
+                        <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1">${career.category}</div>
+                        <h3 class="text-lg font-bold text-white mb-2 group-hover:text-pastel-lavender transition-colors">${career.title}</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-4">${career.description}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-semibold">US Avg Salary</div>
+                            <div class="text-sm font-extrabold text-pastel-mint">${career.salaries.USA}</div>
+                        </div>
+                        <span class="text-xs font-bold text-pastel-lavender flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <span>Explore Path</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* ==========================================================================
+           SEARCH & CATEGORY FILTERING
+           ========================================================================== */
+        function filterCareers() {
+            const query = document.getElementById('career-search-input').value.toLowerCase();
+            const filtered = CAREERS.filter(c => {
+                const matchesCat = activeCategory === 'all' || c.category === activeCategory;
+                const matchesSearch = c.title.toLowerCase().includes(query) || 
+                                      c.description.toLowerCase().includes(query) ||
+                                      c.category.toLowerCase().includes(query);
+                return matchesCat && matchesSearch;
+            });
+            renderCareersGrid(filtered);
+        }
+
+        function setCategoryFilter(category) {
+            activeCategory = category;
+            
+            const pills = document.querySelectorAll('.cat-pill');
+            pills.forEach(pill => {
+                pill.classList.remove('bg-pastel-lavender', 'text-slate-950', 'font-bold', 'shadow-md');
+                pill.classList.add('bg-slate-900', 'text-slate-400');
+            });
+
+            event.target.classList.remove('bg-slate-900', 'text-slate-400');
+            event.target.classList.add('bg-pastel-lavender', 'text-slate-950', 'font-bold', 'shadow-md');
+
+            filterCareers();
+        }
+
+        /* ==========================================================================
+           INTERACTIVE CAREER QUIZ ENGINE
+           ========================================================================== */
+        function answerQuiz(step, answer) {
+            quizAnswers[step] = answer;
+
+            if (step < 4) {
+                // Hide current, show next
+                document.getElementById(`question-${step}`).classList.add('hidden');
+                document.getElementById(`question-${step + 1}`).classList.remove('hidden');
+
+                // Update Progress
+                const percent = (step + 1) * 25;
+                document.getElementById('quiz-step-label').innerText = `Step ${step + 1} of 4: Assessment`;
+                document.getElementById('quiz-progress-percent').innerText = `${percent}%`;
+                document.getElementById('quiz-progress-bar').style.width = `${percent}%`;
+            } else {
+                // Calculate Results
+                calculateQuizResults();
+            }
+        }
+
+        function calculateQuizResults() {
+            document.getElementById('quiz-questions-container').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+
+            document.getElementById('quiz-step-label').innerText = "Match Completed";
+            document.getElementById('quiz-progress-percent').innerText = "100%";
+            document.getElementById('quiz-progress-bar').style.width = "100%";
+
+            // Pick 2-3 matched careers based on answer logic
+            const matchedCardsContainer = document.getElementById('quiz-matched-cards');
+            matchedCardsContainer.innerHTML = '';
+
+            // Filter or shuffle relevant careers
+            let matches = CAREERS.slice(0, 2);
+            if (quizAnswers[1] === 'technical') {
+                matches = CAREERS.filter(c => c.category === 'Engineering' || c.id === 'motorsport-telemetry' || c.id === 'forensic-audio-engineer');
+            } else if (quizAnswers[1] === 'creative') {
+                matches = CAREERS.filter(c => c.category === 'Culinary Arts' || c.id === 'perfumer-master-nose' || c.id === 'wildlife-drone-pilot');
+            } else if (quizAnswers[1] === 'investigative') {
+                matches = CAREERS.filter(c => c.category === 'Journalism & Media' || c.category === 'Medical & Biotech');
+            } else if (quizAnswers[1] === 'business') {
+                matches = CAREERS.filter(c => c.category === 'Business & Tech' || c.id === 'ethical-hacker');
+            }
+
+            if (matches.length === 0) matches = CAREERS.slice(0, 2);
+
+            matches.forEach(c => {
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl bg-slate-900 border border-pastel-lavender/30 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-pastel-mint/20 text-pastel-mint">96% Compatibility Match</span>
+                            <span class="text-xs text-slate-400 font-semibold">${c.category}</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white mb-1">${c.title}</h4>
+                        <p class="text-xs text-slate-400 mb-3">${c.description}</p>
+                    </div>
+                    <button onclick="openCareerModal('${c.id}')" class="w-full py-2 rounded-xl bg-pastel-lavender text-slate-950 font-bold text-xs hover:bg-pastel-purple transition-colors">
+                        View Match Details & Micro-Course
+                    </button>
+                `;
+                matchedCardsContainer.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            quizAnswers = {};
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`question-${i}`).classList.add('hidden');
+            }
+            document.getElementById('question-1').classList.remove('hidden');
+            document.getElementById('quiz-questions-container').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+
+            document.getElementById('quiz-step-label').innerText = "Step 1 of 4: Motivation";
+            document.getElementById('quiz-progress-percent').innerText = "25%";
+            document.getElementById('quiz-progress-bar').style.width = "25%";
+        }
+
+        /* ==========================================================================
+           CAREER MODAL & TAB CONTROL
+           ========================================================================== */
+        function openCareerModal(careerId) {
+            const career = CAREERS.find(c => c.id === careerId);
+            if (!career) return;
+
+            currentActiveCareer = career;
+
+            document.getElementById('modal-title').innerText = career.title;
+            document.getElementById('modal-category').innerText = career.category;
+            document.getElementById('modal-demand').innerText = career.demand;
+            document.getElementById('modal-description').innerText = career.dayInLife;
+
+            document.getElementById('modal-remote-salary').innerText = `${career.remoteSalary} /yr`;
+            document.getElementById('modal-growth-rate').innerText = career.growthRate;
+
+            document.getElementById('stat-regret-percent').innerText = career.regretPercent;
+            document.getElementById('stat-switched-percent').innerText = career.switchedPercent;
+            document.getElementById('stat-fulfillment-score').innerText = career.fulfillmentScore;
+            document.getElementById('risk-rating-badge').innerText = career.riskBadge;
+
+            document.getElementById('course-title').innerText = career.courseTitle;
+            document.getElementById('mentor-name').innerText = career.mentorName;
+            document.getElementById('mentor-title').innerText = career.mentorRole;
+
+            document.getElementById('modal-icon-container').innerHTML = `<i class="fa-solid ${career.icon}"></i>`;
+
+            // Reset Salary Selector
+            document.getElementById('country-salary-select').value = "USA";
+            updateSalaryDisplay();
+
+            switchModalTab('overview');
+            document.getElementById('booking-success').classList.add('hidden');
+            document.getElementById('career-modal').classList.remove('hidden');
+        }
+
+        function closeCareerModal() {
+            document.getElementById('career-modal').classList.add('hidden');
+        }
+
+        function updateSalaryDisplay() {
+            if (!currentActiveCareer) return;
+            const region = document.getElementById('country-salary-select').value;
+            const salary = currentActiveCareer.salaries[region] || currentActiveCareer.salaries.USA;
+            document.getElementById('display-selected-salary').innerText = `${salary} /yr`;
+        }
+
+        function switchModalTab(tabName) {
+            const secOverview = document.getElementById('modal-section-overview');
+            const secCourse = document.getElementById('modal-section-course');
+            const secMentor = document.getElementById('modal-section-mentor');
+
+            const btn1 = document.getElementById('modal-tab-1');
+            const btn2 = document.getElementById('modal-tab-2');
+            const btn3 = document.getElementById('modal-tab-3');
+
+            secOverview.classList.add('hidden');
+            secCourse.classList.add('hidden');
+            secMentor.classList.add('hidden');
+
+            [btn1, btn2, btn3].forEach(btn => {
+                btn.className = "pb-3 text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 shrink-0";
+            });
+
+            if (tabName === 'overview') {
+                secOverview.classList.remove('hidden');
+                btn1.className = "pb-3 text-xs font-bold text-pastel-lavender border-b-2 border-pastel-lavender flex items-center gap-2 shrink-0";
+            } else if (tabName === 'course') {
+                secCourse.classList.remove('hidden');
+                btn2.className = "pb-3 text-xs font-bold text-pastel-lavender border-b-2 border-pastel-lavender flex items-center gap-2 shrink-0";
+            } else if (tabName === 'mentor') {
+                secMentor.classList.remove('hidden');
+                btn3.className = "pb-3 text-xs font-bold text-pastel-lavender border-b-2 border-pastel-lavender flex items-center gap-2 shrink-0";
+            }
+        }
+
+        /* ==========================================================================
+           MICRO-COURSE SIMULATOR & ACTION HANDLERS
+           ========================================================================== */
+        function toggleChapter(num) {
+            const icon = document.getElementById(`check-icon-${num}`);
+            const btn = document.getElementById(`check-btn-${num}`);
+
+            if (icon.classList.contains('hidden')) {
+                icon.classList.remove('hidden');
+                btn.classList.add('bg-pastel-mint/20', 'border-pastel-mint');
+            } else {
+                icon.classList.add('hidden');
+                btn.classList.remove('bg-pastel-mint/20', 'border-pastel-mint');
+            }
+        }
+
+        function selectCourseQuizOption(btn) {
+            document.getElementById('course-quiz-result').classList.remove('hidden');
+
+            if (currentActiveCareer) {
+                const targetEmail = userGmail || "user@gmail.com";
+                triggerEmailPreview(
+                    targetEmail,
+                    `🎓 Micro-Course Completed: ${currentActiveCareer.title}`,
+                    `<p>Congratulations!</p>
+                     <p>You have passed the practical skills simulation for <strong>${currentActiveCareer.courseTitle}</strong>.</p>
+                     <p>You are now eligible to enroll in 1-on-1 remote micro-internships hosted by <strong>${currentActiveCareer.mentorName}</strong> (${currentActiveCareer.mentorRole}).</p>`
+                );
+            }
+        }
+
+        function bookMentorSession() {
+            document.getElementById('booking-success').classList.remove('hidden');
+
+            if (currentActiveCareer) {
+                const targetEmail = userGmail || "user@gmail.com";
+                triggerEmailPreview(
+                    targetEmail,
+                    `🤝 Virtual Internship Invitation: ${currentActiveCareer.title}`,
+                    `<p>Hello Explorer,</p>
+                     <p>Your micro-internship request for <strong>${currentActiveCareer.title}</strong> has been received by <strong>${currentActiveCareer.mentorName}</strong>.</p>
+                     <p><strong>Next Steps:</strong> Check your inbox for calendar invites for your introductory 45-minute orientation call.</p>`
+                );
+            }
+        }
+
+        function scrollToQuiz() {
+            document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openBurnoutModal() {
+            showSimpleModal("Burnout & Misalignment Self-Check", "Your clinical response score indicates mild burnout from repetitive tasks rather than intrinsic career dislike. We recommend trying a 2-week weekend micro-internship before quitting.");
+        }
+
+        function bookCounselorSession() {
+            const targetEmail = userGmail || "user@gmail.com";
+            showSimpleModal("Virtual Counseling Booking", "Request submitted! A licensed career transition psychologist will email you available 45-minute video calendar slots.");
+
+            triggerEmailPreview(
+                targetEmail,
+                "🩺 Confirmed: 1-on-1 Career Psychology Counseling Request",
+                `<p>Hello,</p>
+                 <p>Your request for a confidential 1-on-1 Career Pivot Counseling session has been received. A licensed career psychologist specializing in golden-handcuffs transition anxiety will contact you shortly.</p>`
+            );
+        }
+
+        function openRunwayModal() {
+            showSimpleModal("Transition Runway Estimator", "Based on average living expenses, keeping your current role while completing weekend workshops gives you a 100% risk-buffered transition runway.");
+        }
+
+        function connectPeer(name) {
+            showSimpleModal("Pathfinder Connection Request", `We sent a study circle connection request to ${name}. Check your email inbox for your group invite link!`);
+        }
+
+        function showSimpleModal(title, text) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md';
+            modal.innerHTML = `
+                <div class="glass-panel p-6 rounded-3xl border border-slate-700 max-w-md w-full text-center space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-lavender/20 text-pastel-lavender flex items-center justify-center font-bold text-lg mx-auto">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">${title}</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">${text}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="px-6 py-2.5 rounded-xl bg-pastel-lavender text-slate-950 font-bold text-xs">
+                        Close
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+    </script>
+</body>
+</html>
